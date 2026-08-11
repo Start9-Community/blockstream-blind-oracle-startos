@@ -1,4 +1,4 @@
-# Jade Blind Oracle
+# Blockstream Blind Oracle
 
 Pointing a Jade at a different oracle is close to a one-way door: the firmware refuses to change the oracle key on a device that already holds a wallet. If your Jade is set up, you will have to factory reset it and restore from your recovery phrase. **Have your recovery phrase in hand before you start.**
 
@@ -48,7 +48,7 @@ Follow [Blockstream's guide](https://help.blockstream.com/hc/en-us/articles/1280
 - **`--set-url` is your own address**, copied from the **Oracle API** interface — not the `http://127.0.0.1:8096` in their example.
 - **A LAN address, `.local` address, IP, or private domain also needs `--set-certificate`**, pointing at your server's root certificate as a `.pem` file. Those are served with a certificate your phone or computer does not trust yet. A domain with a Let's Encrypt certificate does not need it.
 
-## Using Jade Blind Oracle
+## Using Blockstream Blind Oracle
 
 Day to day there is nothing to do. The oracle sits there and answers your Jade's unlock requests.
 

@@ -2,10 +2,11 @@ import { setupManifest } from '@start9labs/start-sdk'
 import { long, short } from './i18n'
 
 export const manifest = setupManifest({
-  id: 'jade-blind-oracle',
-  title: 'Jade Blind Oracle',
+  id: 'blockstream-blind-oracle',
+  title: 'Blockstream Blind Oracle',
   license: 'MIT',
-  packageRepo: 'https://github.com/Start9-Community/jade-blind-oracle-startos',
+  packageRepo:
+    'https://github.com/Start9-Community/blockstream-blind-oracle-startos',
   upstreamRepo: 'https://github.com/Blockstream/blind_pin_server',
   marketingUrl: 'https://blockstream.com/jade/',
   donationUrl: null,

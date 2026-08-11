@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="icon.svg" alt="Jade Blind Oracle Logo" width="21%">
+  <img src="icon.svg" alt="Blockstream Blind Oracle Logo" width="21%">
 </p>
 
-# Jade Blind Oracle on StartOS
+# Blockstream Blind Oracle on StartOS
 
 > **Upstream repo:** <https://github.com/Blockstream/blind_pin_server>
 >
@@ -175,7 +175,7 @@ Repo-specific context for contributors and coding agents lives in [AGENTS.md](AG
 ## Quick Reference for AI Consumers
 
 ```yaml
-package_id: jade-blind-oracle
+package_id: blockstream-blind-oracle
 architectures: [x86_64, aarch64]
 volumes:
   main: /data

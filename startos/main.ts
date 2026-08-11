@@ -10,7 +10,7 @@ import {
 } from './utils'
 
 export const main = sdk.setupMain(async ({ effects }) => {
-  console.info(i18n('Starting Jade Blind Oracle!'))
+  console.info(i18n('Starting Blockstream Blind Oracle!'))
 
   const subcontainer = sdk.SubContainer.of(
     effects,

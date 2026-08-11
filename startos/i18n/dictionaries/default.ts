@@ -2,7 +2,7 @@ export const DEFAULT_LANG = 'en_US'
 
 const dict = {
   // main.ts
-  'Starting Jade Blind Oracle!': 0,
+  'Starting Blockstream Blind Oracle!': 0,
   'Oracle API': 1,
   'The oracle is answering requests': 2,
   'The oracle is not answering requests': 3,

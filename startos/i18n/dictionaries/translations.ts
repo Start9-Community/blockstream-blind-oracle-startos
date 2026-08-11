@@ -2,7 +2,7 @@ import { LangDict } from './default'
 
 export default {
   es_ES: {
-    0: '¡Iniciando Jade Blind Oracle!',
+    0: '¡Iniciando Blockstream Blind Oracle!',
     1: 'API del oráculo',
     2: 'El oráculo está respondiendo a las solicitudes',
     3: 'El oráculo no está respondiendo a las solicitudes',
@@ -24,7 +24,7 @@ export default {
     19: 'no se puede escanear',
   },
   de_DE: {
-    0: 'Starte Jade Blind Oracle!',
+    0: 'Starte Blockstream Blind Oracle!',
     1: 'Orakel-API',
     2: 'Das Orakel beantwortet Anfragen',
     3: 'Das Orakel beantwortet keine Anfragen',
@@ -46,7 +46,7 @@ export default {
     19: 'nicht scannbar',
   },
   pl_PL: {
-    0: 'Uruchamianie Jade Blind Oracle!',
+    0: 'Uruchamianie Blockstream Blind Oracle!',
     1: 'API wyroczni',
     2: 'Wyrocznia odpowiada na żądania',
     3: 'Wyrocznia nie odpowiada na żądania',
@@ -68,7 +68,7 @@ export default {
     19: 'nie można zeskanować',
   },
   fr_FR: {
-    0: 'Démarrage de Jade Blind Oracle !',
+    0: 'Démarrage de Blockstream Blind Oracle !',
     1: "API de l'oracle",
     2: 'L’oracle répond aux requêtes',
     3: 'L’oracle ne répond pas aux requêtes',
