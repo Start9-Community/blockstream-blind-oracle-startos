@@ -1,17 +1,19 @@
 import { i18n } from './i18n'
 import { sdk } from './sdk'
-import { uiPort } from './utils'
+import { oracleHostId, oracleInterfaceId, oraclePort } from './utils'
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
-  const uiMulti = sdk.MultiHost.of(effects, 'ui-multi')
-  const uiMultiOrigin = await uiMulti.bindPort(uiPort, {
+  const oracleMulti = sdk.MultiHost.of(effects, oracleHostId)
+  const oracleMultiOrigin = await oracleMulti.bindPort(oraclePort, {
     protocol: 'http',
   })
-  const ui = sdk.createInterface(effects, {
-    name: i18n('Web UI'),
-    id: 'ui',
-    description: i18n('The web interface of Hello World'),
-    type: 'ui',
+  const oracle = sdk.createInterface(effects, {
+    name: i18n('Oracle API'),
+    id: oracleInterfaceId,
+    description: i18n(
+      'The address your Jade companion app uses to reach this oracle',
+    ),
+    type: 'api',
     masked: false,
     schemeOverride: null,
     username: null,
@@ -19,7 +21,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     query: {},
   })
 
-  const uiReceipt = await uiMultiOrigin.export([ui])
+  const oracleReceipt = await oracleMultiOrigin.export([oracle])
 
-  return [uiReceipt]
+  return [oracleReceipt]
 })

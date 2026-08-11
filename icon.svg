@@ -1,11 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#4F46E5"/>
-      <stop offset="100%" stop-color="#7C3AED"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
-  <path d="M256 120c-88.4 0-160 58.1-160 129.8 0 41.4 23.6 78.4 60.5 103.2l-12.9 51.5a8 8 0 0 0 11.6 8.8l62.6-36.1c12.3 2.5 25.2 3.8 38.2 3.8 88.4 0 160-58.1 160-129.8S344.4 120 256 120z" fill="white" opacity="0.95"/>
-  <text x="256" y="270" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="64" fill="#4F46E5">Hello!</text>
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_1313_2034)">
+<path d="M511.743 0.25H0.257812V511.736H511.743V0.25Z" fill="#111316"/>
+<mask id="mask0_1313_2034" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="132" width="118" height="118">
+<path d="M0 132.438H117.627V249.748H0V132.438Z" fill="white"/>
+</mask>
+<g mask="url(#mask0_1313_2034)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M117.625 172.144L100.149 155.232L97.3681 152.534L90.0396 144.998L77.8158 132.438H-0.00390625L117.625 249.748V172.144Z" fill="#06886F"/>
+</g>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M132.242 250.35L249.834 132.439H172.23L155.314 149.919L152.615 152.7L145.079 160.033L132.242 172.522V250.35Z" fill="#00B093"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M132.242 0.0463867V77.6588L149.942 94.778L152.719 97.4764L160.052 105.016L172.512 117.825H250.335L132.242 0.0463867Z" fill="#A9DBD3"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M117.513 0L0.00390625 117.824H77.6205L94.7728 100.095L97.4713 97.3181L105.011 89.9813L117.513 77.8155V0Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_1313_2034">
+<rect width="256" height="256" fill="white"/>
+</clipPath>
+</defs>
 </svg>
