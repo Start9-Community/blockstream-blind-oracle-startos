@@ -17,7 +17,8 @@ Work this package's `TODO.md` from top to bottom. Keep `README.md` (architecture
 - **The health check fetches `GET /` rather than checking the port**, so it exercises the WSGI app and its worker. `checkWebUrl` succeeds on any HTTP response, so it will not catch a worker returning errors.
 - **Dropping nginx dropped its CORS headers and request buffering too**, not just `/healthz`. Without a buffering proxy a stalled client holds a request slot — that is why the worker runs threads. If you reintroduce a proxy, revisit the Limitations section of `README.md`.
 - **Do not add a key-rotation action without reading `pindb.py` first.** The storage key is derived from the server private key (`_get_aes_pin_data_key` is `hmac_sha256(STATIC_SERVER_PRIVATE_KEY, b'pin_data')`), so rotating it makes every stored `.pin` blob undecryptable. It is deliberately not shipped.
-- **`server_public_key.pub` holds 33 raw bytes**, a compressed EC point — not text. The `show-oracle-details` action hex-encodes it for display.
+- **`server_public_key.pub` holds 33 raw bytes**, a compressed EC point — not text. The `show-oracle-details` action hex-encodes it for display and embeds it raw in the enrollment QR.
+- **`oracleQr.ts` is a wire format, not a formatting helper.** It emits the `ur:jade-updps` BC-UR/CBOR message Jade's **Scan Oracle QR** parses; the field names and the 33-byte pubkey length are fixed by Jade's `main/process/update_pinserver.c`. Changing the CBOR shape, the CRC, or the bytewords table silently produces a QR the device rejects, so verify any edit against a known-good encoder rather than by eye — `README.md` § The enrollment QR names one. Jade needs `urlA` before it accepts `pubkey`, and the QR deliberately carries no `certificate`.
 
 ## Inspecting a running install
 

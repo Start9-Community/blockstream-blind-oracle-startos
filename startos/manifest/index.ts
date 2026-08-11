@@ -5,7 +5,7 @@ export const manifest = setupManifest({
   id: 'jade-blind-oracle',
   title: 'Jade Blind Oracle',
   license: 'MIT',
-  packageRepo: 'https://github.com/Start9Labs/jade-blind-oracle-startos',
+  packageRepo: 'https://github.com/Start9-Community/jade-blind-oracle-startos',
   upstreamRepo: 'https://github.com/Blockstream/blind_pin_server',
   marketingUrl: 'https://blockstream.com/jade/',
   donationUrl: null,

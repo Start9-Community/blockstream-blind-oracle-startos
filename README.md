@@ -70,9 +70,8 @@ Upstream expects the operator to generate a key pair by hand and bind-mount it. 
 
 1. On init, `startos/init/generateServerKey.ts` runs upstream's own `generateserverkey` module in a temporary container, writing the key pair to the volume, then tightens the private key to `0600`. Generation is keyed on both key files already existing rather than on the init kind, so a key restored from backup is never overwritten — `restoreInit` runs first and populates the volume before this check. Requiring both halves means an interrupted generation is retried rather than left half-written.
 2. A `prepare-data` oneshot creates `pins/` and chowns the volume to `www-data` before the daemon starts.
-3. An *important* task prompts the user to read the public key out of the **Show Oracle Public Key** action.
 
-Nothing else is pre-configured, and there is no admin account or password.
+Nothing else is pre-configured, and there is no admin account or password. Enrolling a Jade is a manual, user-paced procedure documented in `instructions.md`, so the package raises no install task for it.
 
 ## Configuration Management
 
@@ -90,17 +89,43 @@ Neither upstream setting is currently exposed; both are left at their upstream d
 
 Declared as `type: 'api'` — there is no browser UI, so the interface offers its address for copying rather than a launch button. The container speaks plain HTTP and StartOS terminates TLS in front of it.
 
+The bind requests no `preferredExternalPort`. The SDK derives an SSL leg for `http` and fixes its preference at the `https` default of 443 regardless of what the root asks for, so a root override would only ever move the plaintext port. Both values are preferences — StartOS assigns something else when the port is taken. Nothing in the oracle protocol depends on a particular external port, since the Jade is handed a whole URL, so neither is worth overriding.
+
 ## Actions (StartOS UI)
 
-### Show Oracle Public Key
+### Show Oracle Details
 
-- **Purpose:** reads `server_public_key.pub` off the volume and returns it hex-encoded, copyable and as a QR code.
+- **Purpose:** returns the enrollment QR a Jade scans, plus `server_public_key.pub` hex-encoded for Blockstream's USB tool.
 - **Visibility:** enabled.
-- **Availability:** any status — the key is readable while the service is stopped.
-- **Inputs:** none.
-- **Outputs:** the 33-byte public key as 66 hex characters.
+- **Availability:** any status — both values are readable while the service is stopped.
+- **Inputs:** `urls`, a multiselect of every non-local address, capped at Jade's two slots and **empty by default** — enrolling an address publishes or exposes it differently depending on which one, so the choice is always the user's. Addresses needing a certificate are labelled as unscannable, since they can only be set up over USB. There is no `minLength`, so an empty selection still returns the public key.
+- **Outputs:** a `ur:jade-updps` string, drawn as a QR when it fits (see `maxQrLength` below) and offered as copyable text either way, plus the 33-byte public key as 66 hex characters.
 
-The file holds raw bytes rather than text, so the action hex-encodes it for display.
+The key file holds raw bytes rather than text, so the action hex-encodes it for display.
+
+#### The enrollment QR
+
+Jade's **Boot Menu → Blind Oracle → Scan Oracle QR** reads a BC-UR-wrapped CBOR message, so `oracleQr.ts` builds one rather than depending on a library:
+
+```
+ur:jade-updps/<bytewords-minimal(cbor ‖ crc32(cbor))>   — uppercased
+{ id: '001', method: 'update_pinserver',
+  params: { urlA: <string>, urlB?: <string>, pubkey: <33 raw bytes>,
+            certificate?: <PEM string> } }
+```
+
+`jade-updps` is the UR type Jade's scanner dispatches on (`main/qrmode.c`), and the params are what `main/process/update_pinserver.c` reads. Uppercasing keeps the payload in the QR's alphanumeric mode; Jade compares the type case-insensitively. Encoder output is byte-identical to [SimpleJadePinServer](https://github.com/Filiprogrammer/SimpleJadePinServer)'s `oracle_qr.html`, which is the same message Umbrel's blind oracle app emits.
+
+Four constraints shape what the action emits:
+
+- **`pubkey` requires `urlA`.** Jade rejects a key without at least one URL (`"Cannot set only second URL"`), so the action emits nothing until the host has an eligible address.
+- **The two slots are clearnet and onion, not primary and fallback.** Jade never opens a socket itself: it answers `auth_user` with an `http_request` naming both URLs and the companion app performs the POST (`main/process/pinclient.c`). Slot A defaults to Blockstream's `https://j8d.io` and slot B to their onion, so the action puts an ACME domain in `urlA` and a Tor address in `urlB`. Omitting `urlB` writes an empty string, which `pinclient.c` reads as "explicitly no second url" — it does not restore Blockstream's default.
+- **The interface cannot compose this, so it stays an action.** The lndconnect pattern — `schemeOverride` plus `query`, letting StartOS emit one connection string per address — works because an lndconnect URI *is* a URL: `addressHostToUrl` builds `scheme://user@host:port` plus a suffix, so the address is the authority and the secrets are query parameters. Here the address is a field inside a CBOR map that is then checksummed and bytewords-encoded, which no scheme/host/path/query decomposition can produce. Since the address is baked into the payload, the action takes it as input rather than choosing silently.
+- **`certificate` is sent for any address the app would not otherwise trust.** Onions are plaintext (`ssl: false`, port 80) over an encrypted transport and ACME domains are publicly trusted, so both go out bare. Everything else — LAN IPs, the mDNS `.local` name, private domains — is served with this server's own CA, so the action fetches the root from `sdk.getSslCertificate(...)` (a `[leaf, int, root]` fullchain, per `FullchainCertData::fullchain_nistp256`) and embeds it. One certificate covers both slots: Jade stores it by a separate call from the URLs and attaches it to every request, where the onion leg simply ignores it.
+- **`maxQrLength` is set by Jade's camera, not by what will encode.** It scans at 320×240 grayscale (`main/camera.c`), so the symbol has to resolve inside 240 pixels. Modules run `4·version + 17` plus an 8-module quiet zone, giving version 13 (796 alphanumeric characters) at a workable three pixels per module, and version 23 even at the two-pixel Nyquist floor. Past the cap the action drops the QR and offers the string as copyable text.
+
+  A certificate cannot come in under it. StartOS's ECDSA root is 688 bytes, which bytewords doubles to 1376 characters; a LAN + onion + certificate payload lands at 1812 characters — version 29, 141 modules, **1.7 pixels per module**. Drawing it larger changes nothing, because the ceiling is how much sensor the symbol gets once it fills the frame. Neither reference implementation ships a certificate in a code, which is consistent with this: Umbrel provisions over Tor, and SimpleJadePinServer's form has no certificate field. Big payloads reach a Jade as *animated multi-part* URs (how it ingests PSBTs), which a single static action-result QR cannot express.
+- **A certificate is never cleared.** Jade stores it independently of the URLs, so unlike `urlB` — which an omitted field blanks — an omitted `certificate` leaves whatever was there. Re-enrolling from a LAN address to a Tor-only one strands the old root on the device, where it is inert because the onion leg uses no TLS. Clearing it would mean sending `reset_certificate`, which is untested here.
 
 ## Backups and Restore
 

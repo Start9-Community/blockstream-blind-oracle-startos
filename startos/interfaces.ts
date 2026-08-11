@@ -6,7 +6,6 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const oracleMulti = sdk.MultiHost.of(effects, oracleHostId)
   const oracleMultiOrigin = await oracleMulti.bindPort(oraclePort, {
     protocol: 'http',
-    preferredExternalPort: oraclePort,
   })
   const oracle = sdk.createInterface(effects, {
     name: i18n('Oracle API'),
