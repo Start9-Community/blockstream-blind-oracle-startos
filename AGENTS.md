@@ -18,21 +18,26 @@ Freshly scaffolded? Work the
 guide page, not a file in this repo — read it, don't copy it in.
 
 Keep `README.md` (technical reference for an AI support or administering agent) and
-`instructions.md` (end-user docs) in sync with your changes.
+`instructions.md` (end-user docs) in sync with your changes. This file restates neither:
+whoever changes the package has both, so it carries only what they don't — repo mechanics,
+a change that looks right and is not, where the next thing gets added, a naming trap, a
+build or test invocation particular to this repo.
 
-**Bugs and feature requests are GitHub issues on this repo** — file them as you find them.
+**Fix a defect you spot rather than reporting it** — you have the package open and the
+context to be sure. File **a GitHub issue on this repo** only when the call isn't yours to
+make: you can't pin the cause down, two defensible fixes exist, or it's too large to ride on
+the work in hand. An open issue is a report, not a queue — implement one when you're asked
+to or when it's labelled `Approved`, then close it with `Closes #<n>`.
+
 Don't record work in the repo instead: no `TODO.md`, no `NOTES.md`, no `PLAN.md`. What you
 verified, tried, and decided belongs in the commit message and the PR body.
 
 ## This repo
 
-- **The volume is the daemon's working directory.** Everything upstream touches resolves relative to CWD, so the daemon runs with `--chdir /data`. Moving the mountpoint means moving `--chdir` with it.
-- **Do not raise `--processes` above 1.** Protocol v1 keeps handshake sessions in worker memory (`sessions` is a closure in `flaskserver.flask_server`), so a second process misses the handshake a subsequent `get_pin` refers to. `--threads` is safe because threads share that closure.
-- **Dropping nginx dropped its CORS headers and request buffering too**, not just `/healthz`. Without a buffering proxy a stalled client holds a request slot — that is why the worker runs threads. Reintroducing a proxy means revisiting `README.md` § Limitations.
-- **Never add a key-rotation action.** The storage key is derived from the server private key (`_get_aes_pin_data_key` is `hmac_sha256(STATIC_SERVER_PRIVATE_KEY, b'pin_data')`), so rotating it makes every stored `.pin` blob undecryptable. Read `pindb.py` before proposing anything that touches the key.
-- **`server_public_key.pub` holds 33 raw bytes**, a compressed EC point — not text. The action hex-encodes it for display and embeds it raw in the enrollment payload.
-- **`oracleQr.ts` is a wire format, not a formatting helper.** It emits the `ur:jade-updps` BC-UR/CBOR message Jade's **Scan Oracle QR** parses; the field names and the 33-byte pubkey length are fixed by Jade's `main/process/update_pinserver.c`. Changing the CBOR shape, the CRC, or the bytewords table silently produces a QR the device rejects — verify any edit against a known-good encoder ([SimpleJadePinServer](https://github.com/Filiprogrammer/SimpleJadePinServer)'s `oracle_qr.html` is byte-identical), never by eye.
-- **Don't try to move enrollment onto the interface.** The lndconnect pattern works because an lndconnect URI _is_ a URL — scheme, authority, query. Here the address is a field inside a CBOR map that is then checksummed and bytewords-encoded, which no scheme/host/path/query decomposition produces.
+- **Do not raise `--processes` above 1** — protocol v1 keeps handshake sessions in worker memory, so a second process misses the handshake a later `get_pin` refers to; `--threads` share it and are safe.
+- **Never add a key-rotation action** — the storage key is derived from the server private key (`_get_aes_pin_data_key` in upstream's `pindb.py`), so rotating it makes every stored `.pin` blob undecryptable.
+- **Verify any edit to `oracleQr.ts` against a known-good encoder, never by eye** — it is the `ur:jade-updps` wire format fixed by Jade's `main/process/update_pinserver.c`, and a wrong CBOR shape, CRC or bytewords table yields a QR the device rejects ([SimpleJadePinServer](https://github.com/Filiprogrammer/SimpleJadePinServer)'s `oracle_qr.html` is byte-identical).
+- **Don't move enrollment onto the interface** — the address is a field inside a checksummed, bytewords-encoded CBOR map, which no scheme/host/path/query decomposition produces.
 - **Smoke-test the image outside StartOS** when changing the Dockerfile or the uwsgi
   invocation:
 
