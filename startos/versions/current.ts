@@ -1,18 +1,14 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '0.1.0:2',
+  version: '0.1.0:3',
   releaseNotes: {
-    en_US:
-      'Wrong-PIN attempts are counted reliably when requests arrive at the same time.',
-    es_ES:
-      'Los intentos de PIN incorrectos se cuentan de forma fiable cuando llegan solicitudes al mismo tiempo.',
+    en_US: 'Now maintained by Start9 and published in the Start9 Registry.',
+    es_ES: 'Ahora lo mantiene Start9 y se publica en el Start9 Registry.',
     de_DE:
-      'Falsche PIN-Versuche werden zuverlässig gezählt, auch wenn Anfragen gleichzeitig eintreffen.',
-    pl_PL:
-      'Nieudane próby PIN są liczone niezawodnie, gdy żądania nadchodzą jednocześnie.',
-    fr_FR:
-      'Les tentatives de PIN erronées sont comptées de manière fiable lorsque des requêtes arrivent en même temps.',
+      'Wird jetzt von Start9 gepflegt und in der Start9 Registry veröffentlicht.',
+    pl_PL: 'Teraz utrzymywany przez Start9 i publikowany w Start9 Registry.',
+    fr_FR: 'Désormais maintenu par Start9 et publié dans le Start9 Registry.',
   },
   migrations: {
     up: async ({ effects }) => {},
