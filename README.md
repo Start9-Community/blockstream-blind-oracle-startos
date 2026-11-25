@@ -12,7 +12,7 @@
 The blind PIN oracle is the server a [Blockstream Jade](https://github.com/Blockstream/Jade) talks to when it unlocks with a PIN. It helps the device decrypt its stored seed and destroys the record after three wrong PINs, without ever learning the PIN, the seed, or the keys. This package runs [that oracle](https://github.com/Blockstream/blind_pin_server) yourself instead of relying on Blockstream's.
 
 - **Upstream repo:** <https://github.com/Blockstream/blind_pin_server>
-- **Wrapper repo:** <https://github.com/Start9-Community/blockstream-blind-oracle-startos>
+- **Wrapper repo:** <https://github.com/Start9Labs/blockstream-blind-oracle-startos>
 
 ---
 
