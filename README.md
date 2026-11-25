@@ -50,7 +50,7 @@ One image, built here from a digest-pinned Debian base. Upstream publishes no re
 
 **This runs uWSGI alone, where upstream's image supervises nginx and uWSGI under runit.** nginx's job upstream is translating HTTP into the uWSGI protocol at the edge, which is redundant here — StartOS already terminates TLS and proxies plain HTTP into the container, and uWSGI speaks HTTP natively. What dropping it costs is under [Limitations](#limitations-and-differences). With a single process there is nothing to supervise, so runit goes too and SIGTERM reaches the server directly.
 
-**Exactly one worker process, with four threads.** Protocol v1 handshake sessions live in worker memory, so a second _process_ would miss the handshake a subsequent request refers to; threads share it. uWSGI starts as root and drops to `www-data` itself, matching upstream's own configuration.
+**Exactly one worker process, with one thread.** Protocol v1 handshake sessions live in worker memory, so a second process would miss the handshake a subsequent request refers to. Upstream's wrong-PIN counter is loaded, checked and saved without a lock, so it counts correctly only when requests are handled one at a time. uWSGI starts as root and drops to `www-data` itself, matching upstream's own configuration.
 
 ## Volume and Data Layout
 
@@ -151,7 +151,7 @@ Init will not regenerate over a restored key pair, so a restore needs nothing do
 
 ## Limitations and Differences
 
-1. **No nginx, which costs three things**: upstream's dedicated health route, the permissive CORS headers it set, and request-body buffering. Without a buffering proxy, uWSGI reads request bodies itself, so a slow or stalled client occupies a request slot — four threads blunt that, but a caller who can reach the address can still degrade availability. Keep the address private.
+1. **No nginx, which costs three things**: upstream's dedicated health route, the permissive CORS headers it set, and request-body buffering. Without a buffering proxy, uWSGI reads request bodies itself, so a slow or stalled client holds the server's only request slot until uWSGI's socket timeout, and a caller who can reach the address can degrade availability. Keep the address private.
 2. **The Redis storage backend is not wired up.** The filesystem backend is used.
 3. **One worker process**, so protocol v1 handshake state is not shared beyond it.
 4. **The handshake session lifetime is not configurable** and is left at upstream's default.

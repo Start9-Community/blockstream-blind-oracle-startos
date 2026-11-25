@@ -34,7 +34,7 @@ verified, tried, and decided belongs in the commit message and the PR body.
 
 ## This repo
 
-- **Do not raise `--processes` above 1** — protocol v1 keeps handshake sessions in worker memory, so a second process misses the handshake a later `get_pin` refers to; `--threads` share it and are safe.
+- **Do not raise `--processes` above 1 or add `--threads`** — protocol v1 keeps handshake sessions in worker memory, so a second process misses the handshake a later `get_pin` refers to, and upstream's wrong-PIN counter is an unlocked read-modify-write that undercounts concurrent guesses.
 - **Never add a key-rotation action** — the storage key is derived from the server private key (`_get_aes_pin_data_key` in upstream's `pindb.py`), so rotating it makes every stored `.pin` blob undecryptable.
 - **Verify any edit to `oracleQr.ts` against a known-good encoder, never by eye** — it is the `ur:jade-updps` wire format fixed by Jade's `main/process/update_pinserver.c`, and a wrong CBOR shape, CRC or bytewords table yields a QR the device rejects ([SimpleJadePinServer](https://github.com/Filiprogrammer/SimpleJadePinServer)'s `oracle_qr.html` is byte-identical).
 - **Don't move enrollment onto the interface** — the address is a field inside a checksummed, bytewords-encoded CBOR map, which no scheme/host/path/query decomposition produces.

@@ -40,9 +40,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
     .addDaemon('primary', {
       subcontainer,
       exec: {
-        // One worker only: v1 handshake sessions live in worker memory, so a
-        // second worker would miss the handshake its get_pin call refers to.
-        // Threads add concurrency within that one worker, sharing the sessions.
+        // One worker, one thread: v1 sessions live in worker memory and the wrong-PIN counter assumes serial requests.
         command: [
           'uwsgi',
           '--plugin',
@@ -58,8 +56,6 @@ export const main = sdk.setupMain(async ({ effects }) => {
           '--master',
           '--processes',
           '1',
-          '--threads',
-          '4',
           '--need-app',
           '--die-on-term',
           '--uid',
