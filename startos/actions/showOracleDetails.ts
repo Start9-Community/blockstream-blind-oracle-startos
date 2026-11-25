@@ -100,6 +100,7 @@ export const showOracleDetails = sdk.Action.withInput(
                   copyable: true,
                   qr: !!scannable,
                   masked: false,
+                  launchable: false,
                 },
               ]
             : []),
@@ -111,6 +112,7 @@ export const showOracleDetails = sdk.Action.withInput(
             copyable: true,
             qr: false,
             masked: false,
+            launchable: false,
           },
         ],
       },
