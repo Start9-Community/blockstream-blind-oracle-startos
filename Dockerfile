@@ -2,9 +2,8 @@
 # upstream commit. Bump BLIND_PIN_SERVER_REF to update — see UPDATING.md.
 FROM debian:trixie-slim@sha256:3a39a0592364683e6bab97937b72cad5a8fa6dcbbee90edb3bb48c7f8e94f258
 
-# Ahead of the commit Jade 1.0.40 pins: the newer ones move upstream to Debian
-# trixie and Python 3.13, which is what the hash-pinned wheels here resolve for.
-ARG BLIND_PIN_SERVER_REF=22607096cc0f0c703b355cf2886511d354a8b994
+# Ahead of the commit Jade 1.0.41 pins — see UPDATING.md.
+ARG BLIND_PIN_SERVER_REF=7f499c108b9898af230fad642e3c5e8220d5891b
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \

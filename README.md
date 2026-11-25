@@ -66,7 +66,7 @@ One volume, and it is also the daemon's working directory — which is not decor
 | `server_public_key.pub`  | The matching public key — 33 **raw bytes**, not text |
 | `pins/<hash>.pin`        | One encrypted blob per enrolled client key           |
 
-The service refuses to start if the private key or `pins/` is missing.
+The service refuses to start if the private key or `pins/` is missing, or if the private key is readable by anyone but its owner. Init and the oneshot both set it to `0600`, so a restored or hand-edited key is corrected before the daemon starts.
 
 **Both artifacts are irreplaceable.** Every stored blob is encrypted under a key derived from the private key, so losing either the key or the blobs means every Jade enrolled here can no longer be unlocked by PIN and must be restored from its recovery phrase. There is no rotation and no rebuild.
 
@@ -74,7 +74,7 @@ The service refuses to start if the private key or `pins/` is missing.
 
 None. There is no configuration file this package owns, seeds, or rewrites, and no `store.json`.
 
-Everything on the volume is written by the application itself or by the init step that generates the key pair. The two upstream settings that exist — the handshake session lifetime and the choice of storage backend — are left at their defaults and are not exposed, which means the filesystem backend is in use.
+Everything on the volume is written by the application itself or by the init step that generates the key pair. The upstream settings that exist — the handshake session lifetime, the cap on concurrent v1 handshake sessions, and the choice of storage backend — are left at their defaults and are not exposed, which means the filesystem backend is in use.
 
 ## Dependencies
 
@@ -154,7 +154,7 @@ Init will not regenerate over a restored key pair, so a restore needs nothing do
 1. **No nginx, which costs three things**: upstream's dedicated health route, the permissive CORS headers it set, and request-body buffering. Without a buffering proxy, uWSGI reads request bodies itself, so a slow or stalled client holds the server's only request slot until uWSGI's socket timeout, and a caller who can reach the address can degrade availability. Keep the address private.
 2. **The Redis storage backend is not wired up.** The filesystem backend is used.
 3. **One worker process**, so protocol v1 handshake state is not shared beyond it.
-4. **The handshake session lifetime is not configurable** and is left at upstream's default.
+4. **The handshake session lifetime and the v1 session cap are not configurable** and are left at upstream's defaults: five minutes, and 5,000 open sessions, past which a new v1 handshake is refused until older ones expire.
 5. **The API is unauthenticated**, as upstream.
 6. **There is no key rotation, deliberately.** The storage key is derived from the server private key, so rotating it would make every stored blob undecryptable.
 7. **An address served with this server's own certificate cannot be enrolled by QR** — only over USB.

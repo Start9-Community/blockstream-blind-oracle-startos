@@ -17,7 +17,7 @@ gh api repos/Blockstream/Jade/tags --jq '.[].name'
 gh api repos/Blockstream/Jade/contents/pinserver?ref=<jade-tag> --jq .sha
 ```
 
-Prefer a commit at or below the one pinned by the newest Jade firmware release unless there is a specific reason to move ahead of it. **The current pin is deliberately ahead** of Jade `1.0.40`'s (`d2748959`): the three later commits move upstream to Debian trixie and Python 3.13, which is what this image's hash-pinned wheels resolve for. They change dependencies and packaging only, not the wire protocol.
+Prefer a commit at or below the one pinned by the newest Jade firmware release unless there is a specific reason to move ahead of it. **The current pin is deliberately ahead** of Jade `1.0.41`'s (`22607096`): the later commits are server-side security fixes and a libwally update. They leave the wire protocol and the stored record format unchanged; the one stricter rule they add, a v2 `get_pin` counter above the `set_pin` one, is what Jade's never-reset, per-request counter (`storage_get_replay_counter` in Jade's `main/storage.c`) already sends.
 
 ## Applying the bump
 
