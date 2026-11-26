@@ -99,9 +99,9 @@ Bound on the `oracle-multi` MultiHost over HTTP and not masked. The container sp
 Upstream expects an operator to generate a key pair by hand and mount it in. This package does it, and does it once.
 
 1. **Init generates the key pair** by running upstream's own generator in a temporary container, then tightens the private key to `0600`.
-2. **A oneshot prepares the volume** — creating `pins/` and giving the whole directory to `www-data` — before the daemon starts.
+2. **A oneshot prepares the volume** — creating `pins/` and giving it and the private key to `www-data` — before the daemon starts. The top of the volume stays owned by root: it is uWSGI's working directory, which Python puts on its import path, so the service user must not be able to add files there.
 
-**Generation is keyed on the key files existing, not on whether this is an install.** A key restored from a backup must survive, because regenerating it would orphan every Jade already enrolled. Both halves are required, so an interrupted generation is retried rather than left half-written.
+**Generation is keyed on the private key, not on whether this is an install.** A valid private key on the volume is always kept, because regenerating it would orphan every Jade already enrolled; init rewrites the public key from it on every run. A new pair is generated only when there is no usable private key, and init **fails** instead when `pins/` already holds records, since a new key cannot decrypt them — the fix there is restoring the service from a backup.
 
 There is no admin account, no password, and no install task. Enrolling a Jade is a manual, user-paced procedure — and one with a serious prerequisite, since a Jade that already holds a wallet must be factory reset before its oracle can be changed. That warning lives in `instructions.md`, where the user reads it.
 
@@ -147,7 +147,7 @@ The whole `main` volume is copied, with no exclusions — `sdk.Backups.ofVolumes
 
 **This backup is the difference between a recoverable Jade and a recovery-phrase restore.** It holds the private key every stored blob is encrypted under, and the blobs themselves. Lose both and every enrolled device falls back to its recovery phrase; keep them and a restore returns the same oracle, with enrolled devices continuing to work untouched.
 
-Init will not regenerate over a restored key pair, so a restore needs nothing done to it. Devices do not need re-enrolling unless the oracle's _address_ has changed.
+Init will not regenerate over a restored private key, so a restore needs nothing done to it. Devices do not need re-enrolling unless the oracle's _address_ has changed.
 
 ## Limitations and Differences
 
