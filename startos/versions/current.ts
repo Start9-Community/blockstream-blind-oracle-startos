@@ -1,58 +1,33 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '0.1.0:4',
+  version: '0.1.0:5',
   releaseNotes: {
-    en_US: `Updated the blind oracle to the latest upstream code.
+    en_US: `Hardening of the oracle's key and data.
 
-**Security**
+- A valid oracle key on the server is always kept.
+- If the oracle key is lost while PIN records remain, the service will not start until you restore it from a backup.
+- Tighter file permissions on the service's data.`,
+    es_ES: `Refuerzo de la clave y los datos del oráculo.
 
-- An intercepted PIN-setup request can no longer be replayed against the oracle.
-- Stored PIN records are verified in constant time.
-- A flood of abandoned handshakes can no longer exhaust the oracle's memory.
-- Failed requests no longer write their encrypted contents to the service log.
+- Una clave válida del oráculo en el servidor se conserva siempre.
+- Si la clave del oráculo se pierde mientras quedan registros de PIN, el servicio no se iniciará hasta que lo restaures desde una copia de seguridad.
+- Permisos de archivo más estrictos sobre los datos del servicio.`,
+    de_DE: `Härtung des Oracle-Schlüssels und der Daten.
 
-[Full upstream changes](https://github.com/Blockstream/blind_pin_server/compare/22607096cc0f0c703b355cf2886511d354a8b994...7f499c108b9898af230fad642e3c5e8220d5891b)`,
-    es_ES: `Se actualizó el oráculo ciego al código más reciente de upstream.
+- Ein gültiger Oracle-Schlüssel auf dem Server bleibt immer erhalten.
+- Geht der Oracle-Schlüssel verloren, während PIN-Datensätze vorhanden sind, startet der Dienst erst wieder, wenn du ihn aus einer Sicherung wiederherstellst.
+- Strengere Dateiberechtigungen für die Daten des Dienstes.`,
+    pl_PL: `Wzmocnienie ochrony klucza i danych wyroczni.
 
-**Seguridad**
+- Prawidłowy klucz wyroczni na serwerze jest zawsze zachowywany.
+- Jeśli klucz wyroczni zostanie utracony, a rekordy PIN pozostaną, usługa nie uruchomi się, dopóki nie przywrócisz jej z kopii zapasowej.
+- Ściślejsze uprawnienia plików dla danych usługi.`,
+    fr_FR: `Renforcement de la clé et des données de l'oracle.
 
-- Una solicitud de configuración de PIN interceptada ya no puede reenviarse al oráculo.
-- Los registros de PIN almacenados se verifican en tiempo constante.
-- Una avalancha de handshakes abandonados ya no puede agotar la memoria del oráculo.
-- Las solicitudes fallidas ya no escriben su contenido cifrado en el registro del servicio.
-
-[Cambios completos de upstream](https://github.com/Blockstream/blind_pin_server/compare/22607096cc0f0c703b355cf2886511d354a8b994...7f499c108b9898af230fad642e3c5e8220d5891b)`,
-    de_DE: `Das Blind Oracle wurde auf den neuesten Upstream-Code aktualisiert.
-
-**Sicherheit**
-
-- Eine abgefangene PIN-Einrichtungsanfrage kann nicht mehr erneut an das Oracle gesendet werden.
-- Gespeicherte PIN-Datensätze werden in konstanter Zeit geprüft.
-- Eine Flut abgebrochener Handshakes kann den Speicher des Oracles nicht mehr erschöpfen.
-- Fehlgeschlagene Anfragen schreiben ihren verschlüsselten Inhalt nicht mehr in das Dienstprotokoll.
-
-[Alle Upstream-Änderungen](https://github.com/Blockstream/blind_pin_server/compare/22607096cc0f0c703b355cf2886511d354a8b994...7f499c108b9898af230fad642e3c5e8220d5891b)`,
-    pl_PL: `Zaktualizowano ślepą wyrocznię do najnowszego kodu upstream.
-
-**Bezpieczeństwo**
-
-- Przechwyconego żądania ustawienia PIN-u nie można już ponownie wysłać do wyroczni.
-- Zapisane rekordy PIN są weryfikowane w stałym czasie.
-- Zalew porzuconych handshake'ów nie może już wyczerpać pamięci wyroczni.
-- Nieudane żądania nie zapisują już swojej zaszyfrowanej treści w dzienniku usługi.
-
-[Pełna lista zmian upstream](https://github.com/Blockstream/blind_pin_server/compare/22607096cc0f0c703b355cf2886511d354a8b994...7f499c108b9898af230fad642e3c5e8220d5891b)`,
-    fr_FR: `L'oracle aveugle a été mis à jour vers le code upstream le plus récent.
-
-**Sécurité**
-
-- Une requête de configuration de PIN interceptée ne peut plus être rejouée contre l'oracle.
-- Les enregistrements de PIN stockés sont vérifiés en temps constant.
-- Un afflux de handshakes abandonnés ne peut plus épuiser la mémoire de l'oracle.
-- Les requêtes échouées n'écrivent plus leur contenu chiffré dans le journal du service.
-
-[Modifications upstream complètes](https://github.com/Blockstream/blind_pin_server/compare/22607096cc0f0c703b355cf2886511d354a8b994...7f499c108b9898af230fad642e3c5e8220d5891b)`,
+- Une clé d'oracle valide présente sur le serveur est toujours conservée.
+- Si la clé de l'oracle est perdue alors que des enregistrements de PIN subsistent, le service ne démarrera pas tant que vous ne l'aurez pas restauré depuis une sauvegarde.
+- Permissions de fichiers plus strictes sur les données du service.`,
   },
   migrations: {
     up: async ({ effects }) => {},

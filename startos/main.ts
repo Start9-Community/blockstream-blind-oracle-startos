@@ -31,7 +31,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
         command: [
           'sh',
           '-c',
-          `mkdir -p ${dataDir}/${pinsDir} && chown -R ${serverUser}:${serverUser} ${dataDir} && chmod 600 ${dataDir}/${privateKeyFile}`,
+          // The volume is uWSGI's working directory, which it puts on the import path, so its top stays root-owned.
+          `mkdir -p ${dataDir}/${pinsDir} && chown root:root ${dataDir} && chmod 755 ${dataDir} && chown -R ${serverUser}:${serverUser} ${dataDir}/${pinsDir} && chown ${serverUser}:${serverUser} ${dataDir}/${privateKeyFile} && chmod 600 ${dataDir}/${privateKeyFile}`,
         ],
         user: 'root',
       },
